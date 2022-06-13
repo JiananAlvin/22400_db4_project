@@ -16,7 +16,6 @@ class TemperatureSensor:
     THERM_B_COEFF = 3950
     ADC_MAX = 1023
     ADC_Vmax = 3.15
-
     feedname = "Temperature"
     
     def __init__(self, period):
@@ -24,17 +23,14 @@ class TemperatureSensor:
         adc = ADC(Pin(constant.TENP_SENS_ADC_PIN_NO))
         adc.atten(ADC.ATTN_11DB)
         adc.width(ADC.WIDTH_10BIT)
-        return adc
-    
+        self.temp_sens = adc
 
 
-        
-
-    def read_value(self, temp_sens):
+    def read_value(self):
         raw_read = []
         # Collect NUM_SAMPLES
         for i in range(1, self.NUM_SAMPLES+1):
-            raw_read.append(temp_sens.read())
+            raw_read.append(self.temp_sens.read())
 
         # Average of the NUM_SAMPLES and look it up in the table
         raw_average = sum(raw_read)/self.NUM_SAMPLES

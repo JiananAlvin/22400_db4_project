@@ -69,8 +69,8 @@ class Server:
     #   "ADAFRUIT_USERNAME/feeds/feed_name"
     def publish_feed(self, sensor):
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, sensor.feedname), 'utf-8')
-        feed_data = sensor.get_value()
         while True:
+            feed_data = sensor.read_value()
             try:
                 self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
                 time.sleep(sensor.period)

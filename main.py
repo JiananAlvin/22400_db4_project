@@ -9,11 +9,8 @@ def main():
     server.connect_MQTT()
 
     temperature_sensor = TemperatureSensor(5)
+    server.publish_feed(temperature_sensor)
 
-    while (True):
-        server.publish_feed(temperature_sensor)
-        time.sleep(PUBLISH_PERIOD_IN_SEC)
-    
 
 if __name__=="__main__":
     main()
