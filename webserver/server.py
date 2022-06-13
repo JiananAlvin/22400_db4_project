@@ -12,8 +12,8 @@ class Server:
     mqtt_client_id = None
     mqtt_client = None
     ADAFRUIT_IO_URL = 'io.adafruit.com'
-    ADAFRUIT_IO_USERNAME = 's204698'
-    ADAFRUIT_IO_KEY = 'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
+    ADAFRUIT_IO_USERNAME = 's194729'
+    ADAFRUIT_IO_KEY = 'aio_SImY77ltZfreTukLs1odFTwIvOHb'
 
 
     def __init__(self, WIFI_SSID, WIFI_PASSWORD):

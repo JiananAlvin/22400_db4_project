@@ -3,11 +3,13 @@ import time
 import utime
 import constant
 import _thread
+import random
 
 class StepperMotor():
 
     def __init__(self, mode):
         self.mode = mode
+        self.feedname = mode
         if mode == "feeding":
             self.pinStep = Pin(constant.STEPPER_MOTOR_FOOD_STEP_PIN_NO, Pin.OUT)
             self.pinDir = Pin(constant.STEPPER_MOTOR_FOOD_DIR_PIN_NO, Pin.OUT)
@@ -22,19 +24,23 @@ class StepperMotor():
             self.pinStep.duty(0)
 
 
+    #overwrite server method 
+    def read_value(self):
+        return random.randint()
+
     def update_threading(self, args):
         # PWM for the cooling pump
         if self.mode == "cooling":
             freq, duty = args[0], args[1] 
-            pinStep1.freq(freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
-            pinStep1.duty(duty)  # Duty cycle refers the amount of time the pulse is ON -> voltage
+            self.pinStep.freq(freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
+            self.pinStep.duty(duty)  # Duty cycle refers the amount of time the pulse is ON -> voltage
         # bit-banging for the food dosing pump
         else: 
             duration, period = args[0], args[1]
             for x in range(0, duration):
-                pinStep2.value(1)
+                self.pinStep.value(1)
                 utime.sleep_us(period)
-                pinStep2.value(0)
+                self.pinStep.value(0)
                 utime.sleep_us(period)
 
     def update(self, args):
