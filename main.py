@@ -16,8 +16,9 @@ def main():
     temperature_sensor = TemperatureSensor(5)
 
     #server.publish_feed(temperature_sensor)
-    _thread.start_new_thread(server.publish_feed(), temperature_sensor)
+    _thread.start_new_thread(server.publish_feed, [temperature_sensor])
     print("Thread ok")
+    time.sleep(20)
     return 0
 
 if __name__=="__main__":
