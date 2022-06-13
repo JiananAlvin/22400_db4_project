@@ -4,22 +4,29 @@ import time
 from temperature_sensor.read_temp import TemperatureSensor
 from stepper_motor.stepper_motor import StepperMotor
 
+class thread_args:
+    def __init__(self, sensor, lock):
+        self.sensor = sensor
+        self.lock = lock
+
+
 def init_sensors():
     period = 30
     sensor_list = []
     sensor_list.append(TemperatureSensor(30))
-    #sensor_list.append(StepperMotor("cooling", period))
-    #sensor_list.append(StepperMotor("feeding", period))
+    sensor_list.append(StepperMotor("cooling", period))
+    sensor_list.append(StepperMotor("feeding", period))
     return sensor_list
 
 
 def thread_manager(sensor_list, server):
     lock = _thread.allocate_lock()
-    publish = publish_feed
     for sensor in sensor_list:
-        print(sensor.feedname)
-        #server.publish_feed(sensor)
-        _thread.start_new_thread(publish,(sensor,lock))
+        args = (thread_args(sensor, lock),)
+        print(args)
+        print(type(args))
+        #server.publish_feed(sensor)        
+        _thread.start_new_thread(server.publish_feed, args)
         print("%s done" % sensor.feedname)
 
 
@@ -30,7 +37,7 @@ def main():
     #server.publish_feed(temperature_sensor)
     sensor_list = init_sensors()
     thread_manager(sensor_list, server)
-    # sensor_list[1].update([800,400])
+    sensor_list[1].update_threading([800,400])    
     # sensor_list[2].update([200000, 500])
     
     while True:

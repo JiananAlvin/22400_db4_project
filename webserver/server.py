@@ -12,8 +12,8 @@ class Server:
     mqtt_client_id = None
     mqtt_client = None
     ADAFRUIT_IO_URL = 'io.adafruit.com'
-    ADAFRUIT_IO_USERNAME = 's194729'
-    ADAFRUIT_IO_KEY = 'aio_SImY77ltZfreTukLs1odFTwIvOHb'
+    ADAFRUIT_IO_USERNAME = 's204698'
+    ADAFRUIT_IO_KEY = 'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
 
 
     def __init__(self, WIFI_SSID, WIFI_PASSWORD):
@@ -69,19 +69,20 @@ class Server:
     #   "ADAFRUIT_USERNAME/feeds/feed_name"
     def publish_feed(self, args):
         print(args)
-        sensor = args[0]
-        lock = args[1]
+        sensor = args.sensor
+        lock = args.lock
         print("publishing %s" % sensor.feedname)
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, sensor.feedname), 'utf-8')
         while True:
-            while not lock.locked():
-                lock.acquire()
-                break
+            while lock.locked():
+                True
+            lock.acquire()
             feed_data = sensor.read_value()
             print("value %s" % str(feed_data))
 
             try:
                 self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
+                print("publishing for real %s" % sensor.feedname)
                 lock.release()
                 time.sleep(sensor.period)   
             except KeyboardInterrupt:

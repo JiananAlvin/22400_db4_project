@@ -34,17 +34,17 @@ class TemperatureSensor:
 
         # Average of the NUM_SAMPLES and look it up in the table
         raw_average = sum(raw_read)/self.NUM_SAMPLES
-        # print('raw_avg = ' + str(raw_average))
-        # print('V_measured = ' + str(self.adc_V_lookup[round(raw_average)]))
+        print('raw_avg = ' + str(raw_average))
+        print('V_measured = ' + str(self.adc_V_lookup[round(raw_average)]))
 
         # Convert to resistance
         raw_average = self.ADC_MAX * self.adc_V_lookup[round(raw_average)]/self.ADC_Vmax
         resistance = (self.SER_RES * raw_average) / (self.ADC_MAX - raw_average)
-        # print('Thermistor resistance: {} ohms'.format(resistance))
+        print('Thermistor resistance: {} ohms'.format(resistance))
 
         # Convert to temperature
         steinhart = log(resistance / self.NOM_RES) / self.THERM_B_COEFF
         steinhart += 1.0 / (self.TEMP_NOM + 273.15)
         steinhart = (1.0 / steinhart) - 273.15
-        # print('Thermistor temperature: ' + str(steinhart))
+        print('Thermistor temperature: ' + str(steinhart))
         return steinhart
