@@ -1,28 +1,47 @@
 from machine import Pin, PWM
 import time
 import utime
+import constant
+import _thread
 
-pinStep1 = PWM(Pin(33))  # Step
-pinDir1 = Pin(27, Pin.OUT)  # Direction
-pinStep2 = Pin(12, Pin.OUT)
-pinDir2 = Pin(13, Pin.OUT)
+class StepperMotor():
 
-pinDir1(1)  # 0: counterclockwise, 1: clockwise
-pinDir2(0)
+    def __init__(self, mode):
+        self.mode = mode
+        if mode == "feeding":
+            self.pinStep = Pin(constant.STEPPER_MOTOR_FOOD_STEP_PIN_NO, Pin.OUT)
+            self.pinDir = Pin(constant.STEPPER_MOTOR_FOOD_DIR_PIN_NO, Pin.OUT)
+            self.pinDir(1)
+            self.pinStep.value(0)
 
-# Initialize two stepper motors
-pinStep1.freq(0)
-pinStep1.duty(0)
-pinStep2.value(0)
-time.sleep(5)
+        else:
+            self.pinStep = PWM(Pin(constant.STEPPER_MOTOR_COOL_STEP_PIN_NO))  # Step
+            self.pinDir = Pin(constant.STEPPER_MOTOR_COOL_DIR_PIN_NO, Pin.OUT)  # Direction
+            self.pinDir(0)
+            self.pinStep.freq(0)
+            self.pinStep.duty(0)
 
-# PWM for the cooling pump
-pinStep1.freq(800)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
-pinStep1.duty(400)  # Duty cycle refers the amount of time the pulse is ON -> voltage
 
-# bit-banging for the food dosing pump
-for x in range(0, 200000):
-    pinStep2.value(1)
-    utime.sleep_us(500)
-    pinStep2.value(0)
-    utime.sleep_us(500)
+    def update_threading(self, args):
+        # PWM for the cooling pump
+        if self.mode == "cooling":
+            freq, duty = args[0], args[1] 
+            pinStep1.freq(freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
+            pinStep1.duty(duty)  # Duty cycle refers the amount of time the pulse is ON -> voltage
+        # bit-banging for the food dosing pump
+        else: 
+            duration, period = args[0], args[1]
+            for x in range(0, duration):
+                pinStep2.value(1)
+                utime.sleep_us(period)
+                pinStep2.value(0)
+                utime.sleep_us(period)
+
+    def update(self, args):
+        _thread.start_new_thread(self.update_threading, args)
+    
+        
+    
+    
+
+ 
