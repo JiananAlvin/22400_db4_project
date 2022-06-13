@@ -1,7 +1,6 @@
 from webserver.server import Server
-
-from temprature_sensor.read_temp import Temperature
-import utime
+import time
+from temperature_sensor.read_temp import TemperatureSensor
 
 def main():
 
@@ -9,23 +8,16 @@ def main():
     server.create_MQTT_clientID()
     server.connect_MQTT()
 
-    readTemp = Temperature()
-    temp_sens = readTemp.init_temp_sensor()
+    temperature_sensor = TemperatureSensor()
+    temp_sens = temperature_sensor.init_temp_sensor()
 
-    sample_last_ms = 0
-    SAMPLE_INTERVAL = 1000
+    PUBLISH_PERIOD_IN_SEC = 5
 
     while (True):
-        if utime.ticks_diff(utime.ticks_ms(), sample_last_ms) >= SAMPLE_INTERVAL:
-            temp = readTemp.read_temp(temp_sens)
-            print('Thermistor temperature: ' + str(temp))
-            sample_last_ms = utime.ticks_ms()
-            server.publish_feed("temperature", temp)
-
+        temp = temperature_sensor.read_temp(temp_sens)
+        server.publish_feed("temperature", temp)
+        time.sleep(PUBLISH_PERIOD_IN_SEC)
     
-    
-
- 
 
 if __name__=="__main__":
     main()

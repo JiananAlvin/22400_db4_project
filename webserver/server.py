@@ -3,18 +3,17 @@ import network
 import time
 from umqtt.robust import MQTTClient
 import os
-import gc
 import sys
+
 
 class Server:
     WIFI_SSID = None
     WIFI_PASSWORD = None
     mqtt_client_id = None
-    ADAFRUIT_IO_URL = b'io.adafruit.com' 
-    ADAFRUIT_IO_USERNAME = b's204698'
-    ADAFRUIT_IO_KEY = b'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
-
-
+    mqtt_client = None
+    ADAFRUIT_IO_URL = 'io.adafruit.com'
+    ADAFRUIT_IO_USERNAME = 's204698'
+    ADAFRUIT_IO_KEY = 'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
 
 
     def __init__(self, WIFI_SSID, WIFI_PASSWORD):
@@ -41,7 +40,6 @@ class Server:
             print('could not connect to the WiFi network')
             sys.exit()
 
-
     # create a random MQTT clientID 
     def create_MQTT_clientID(self):
         random_num = int.from_bytes(os.urandom(3), 'little')
@@ -54,14 +52,13 @@ class Server:
     #   Caveat: a secure connection uses about 9k bytes of the heap
     #         (about 1/4 of the micropython heap on the ESP8266 platform)
     def connect_MQTT(self):
-
-        client = MQTTClient(self.mqtt_client_id, 
-                            self.ADAFRUIT_IO_URL, 
-                            self.ADAFRUIT_USERNAME, 
-                            self.ADAFRUIT_IO_KEY,
-                            ssl=False)
+        self.mqtt_client = MQTTClient(client_id=self.mqtt_client_id,
+                                      server=self.ADAFRUIT_IO_URL,
+                                      user=self.ADAFRUIT_IO_USERNAME,
+                                      password=self.ADAFRUIT_IO_KEY,
+                                      ssl=False)
         try:            
-            client.connect()
+            self.mqtt_client.connect()
         except Exception as e:
             print('could not connect to MQTT server {}{}'.format(type(e).__name__, e))
             sys.exit()
@@ -70,16 +67,12 @@ class Server:
     #
     # format of feed name:  
     #   "ADAFRUIT_USERNAME/feeds/feed_name"
-    def publish_feed(self, feed_name, period):
-        ADAFRUIT_IO_FEEDNAME = feed_name.encode()
-        mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_USERNAME, ADAFRUIT_IO_FEEDNAME), 'utf-8')
-        PUBLISH_PERIOD_IN_SEC = period 
-        while True:
-            try:
-                temp = gc.mem_free()
-                client.publish(mqtt_feedname, bytes(str(free_heap_in_bytes), 'utf-8'), qos=0)  
-                time.sleep(PUBLISH_PERIOD_IN_SEC)
-            except KeyboardInterrupt:
-                print('Ctrl-C pressed...exiting')
-                client.disconnect()
-                sys.exit()
+    def publish_feed(self, feed_name, feed_data):
+        mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feed_name), 'utf-8')
+        try:
+            self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
+            time.sleep(1)
+        except KeyboardInterrupt:
+            print('Ctrl-C pressed...exiting')
+            self.mqtt_client.disconnect()
+            sys.exit()
