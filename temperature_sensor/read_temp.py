@@ -17,16 +17,20 @@ class TemperatureSensor:
     ADC_MAX = 1023
     ADC_Vmax = 3.15
 
-    def __init__(self) -> None:
-        pass
-
-    def init_temp_sensor(self):
+    feedname = "Temperature"
+    
+    def __init__(self, period):
+        self.period = period
         adc = ADC(Pin(constant.TENP_SENS_ADC_PIN_NO))
         adc.atten(ADC.ATTN_11DB)
         adc.width(ADC.WIDTH_10BIT)
         return adc
+    
 
-    def read_temp(self, temp_sens):
+
+        
+
+    def read_value(self, temp_sens):
         raw_read = []
         # Collect NUM_SAMPLES
         for i in range(1, self.NUM_SAMPLES+1):

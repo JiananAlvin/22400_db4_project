@@ -67,12 +67,14 @@ class Server:
     #
     # format of feed name:  
     #   "ADAFRUIT_USERNAME/feeds/feed_name"
-    def publish_feed(self, feed_name, feed_data):
-        mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feed_name), 'utf-8')
-        try:
-            self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
-            time.sleep(1)
-        except KeyboardInterrupt:
-            print('Ctrl-C pressed...exiting')
-            self.mqtt_client.disconnect()
-            sys.exit()
+    def publish_feed(self, sensor):
+        mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, sensor.feedname), 'utf-8')
+        feed_data = sensor.get_value()
+        while True:
+            try:
+                self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
+                time.sleep(sensor.period)
+            except KeyboardInterrupt:
+                print('Ctrl-C pressed...exiting')
+                self.mqtt_client.disconnect()
+                sys.exit()
