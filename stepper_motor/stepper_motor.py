@@ -7,7 +7,9 @@ import random
 
 class StepperMotor():
 
-    def __init__(self, mode):
+    period = 30
+
+    def __init__(self, mode, period):
         self.mode = mode
         self.feedname = mode
         if mode == "feeding":
@@ -26,7 +28,7 @@ class StepperMotor():
 
     #overwrite server method 
     def read_value(self):
-        return random.randint()
+        return 10
 
     def update_threading(self, args):
         # PWM for the cooling pump
