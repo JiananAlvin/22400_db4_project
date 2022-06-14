@@ -4,6 +4,7 @@ import time
 from temperature_sensor.read_temp import TemperatureSensor
 from stepper_motor.stepper_motor import StepperMotor
 
+
 class thread_args:
     def __init__(self, sensor, lock):
         self.sensor = sensor
@@ -25,26 +26,27 @@ def thread_manager(sensor_list, server):
         args = (thread_args(sensor, lock),)
         print(args)
         print(type(args))
-        #server.publish_feed(sensor)        
+        # server.publish_feed(sensor)
         _thread.start_new_thread(server.publish_feed, args)
         print("%s done" % sensor.feedname)
 
 
-
 def main():
-    server = Server("Redmip", "asd12345")
+    # server = Server("Redmip", "asd12345")
+    server = Server("jxuiphone", "12345678")
     server.create_MQTT_clientID()
     server.connect_MQTT()
-    #server.publish_feed(temperature_sensor)
+    # server.publish_feed(temperature_sensor)
     sensor_list = init_sensors()
     thread_manager(sensor_list, server)
-    sensor_list[1].update_threading([800,400])    
-    # sensor_list[2].update([200000, 500])
+    sensor_list[1].update_cooling([0, 5000, 1000])
+    # sensor_list[2].update([0, 200000, 500])
     
     while True:
         0
 
     return 0
+
 
 if __name__=="__main__":
     main()
