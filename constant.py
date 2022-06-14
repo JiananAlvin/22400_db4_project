@@ -9,3 +9,6 @@ STEPPER_MOTOR_FEED_STEP_PIN_NO = 12
 
 # pin for the temperature sensor
 TENP_SENS_ADC_PIN_NO = 32
+
+# feednames
+FEEDNAME_COOL_MOTOR = "Cooling"

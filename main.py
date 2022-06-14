@@ -2,7 +2,7 @@ from webserver.server import Server
 import _thread
 import time
 from temperature_sensor.read_temp import TemperatureSensor
-from stepper_motor.stepper_motor import StepperMotor
+from stepper_motor.stepper_motor import CoolingMotor
 
 
 class thread_args:
@@ -15,8 +15,8 @@ def init_sensors():
     period = 30
     sensor_list = []
     sensor_list.append(TemperatureSensor(30))
-    sensor_list.append(StepperMotor("cooling", period))
-    sensor_list.append(StepperMotor("feeding", period))
+    sensor_list.append(CoolingMotor(period))
+    # sensor_list.append(FeedingMotor(period))
     return sensor_list
 
 
@@ -24,9 +24,8 @@ def thread_manager(sensor_list, server):
     lock = _thread.allocate_lock()
     for sensor in sensor_list:
         args = (thread_args(sensor, lock),)
-        print(args)
-        print(type(args))
-        # server.publish_feed(sensor)
+        # print(args)
+        # print(type(args))
         _thread.start_new_thread(server.publish_feed, args)
         print("%s done" % sensor.feedname)
 
