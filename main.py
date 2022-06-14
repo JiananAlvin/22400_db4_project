@@ -2,7 +2,7 @@ from webserver.server import Server
 import _thread
 import time
 from temperature_sensor.read_temp import TemperatureSensor
-from stepper_motor.stepper_motor import CoolingMotor
+from stepper_motor.cooling_motor import CoolingMotor
 
 
 class thread_args:
