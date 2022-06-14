@@ -12,3 +12,4 @@ TENP_SENS_ADC_PIN_NO = 32
 
 # feednames
 FEEDNAME_COOL_MOTOR = "Cooling"
+FEEDNAME_FOOD_MOTOR = "Feeding"
