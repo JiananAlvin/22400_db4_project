@@ -5,9 +5,10 @@ import constant
 import _thread
 import random
 
-class StepperMotor():
-
+class StepperMotor:
+    
     period = 30
+    new_request = False # Used to kill the current feeding motor thread
 
     def __init__(self, mode, period):
         self.mode = mode
@@ -30,23 +31,42 @@ class StepperMotor():
     def read_value(self):
         return 10
 
-    def update_threading(self, args):
+    def update_cooling(self, args):
+        """ Updates the feeding motor with given args:
+            args[0] = freq
+            args[1] = duty
+        """
         # PWM for the cooling pump
-        if self.mode == "cooling":
-            freq, duty = args[0], args[1] 
-            self.pinStep.freq(freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
-            self.pinStep.duty(duty)  # Duty cycle refers the amount of time the pulse is ON -> voltage
+        freq, duty = args[0], args[1] 
+        self.pinStep.freq(freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
+        self.pinStep.duty(duty)  # Duty cycle refers the amount of time the pulse is ON -> voltage
+    
+    
+    def update_feeding(self, args): 
+        """ Updates the feeding motor with given args:
+            args[0] = duration
+            args[1] = period
+            This method uses a diferent thread every time it is called
+        """
+        self.new_request = True
         # bit-banging for the food dosing pump
-        else: 
-            duration, period = args[0], args[1]
-            for x in range(0, duration):
-                self.pinStep.value(1)
-                utime.sleep_us(period)
-                self.pinStep.value(0)
-                utime.sleep_us(period)
+        duration, period = args[0], args[1]
+        if self.new_request:
+            self.new_request = False
+            _thread.start_new_thread(update , (duration,period))
+   
 
-    def update(self, args):
-        _thread.start_new_thread(self.update_threading, args)
+    def update(duration, period):
+        """ aux function """
+        for x in range(0, duration):
+            if self.new_request:
+                self.new_request = False
+                _thread.exit()
+            self.pinStep.value(1)
+            utime.sleep_us(period)
+            self.pinStep.value(0)
+            utime.sleep_us(period) 
+
     
         
     

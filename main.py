@@ -30,6 +30,7 @@ def thread_manager(sensor_list, server):
         print("%s done" % sensor.feedname)
 
 
+
 def main():
     server = Server("Redmip", "asd12345")
     server.create_MQTT_clientID()
