@@ -15,8 +15,8 @@ def init_sensors():
     period = 30
     sensor_list = []
     sensor_list.append(TemperatureSensor(30))
-    sensor_list.append(CoolingMotor(period))
-    # sensor_list.append(FeedingMotor(period))
+    sensor_list.append(CoolingMotor())
+    sensor_list.append(FeedingMotor())
     return sensor_list
 
 
@@ -39,7 +39,7 @@ def main():
     sensor_list = init_sensors()
     thread_manager(sensor_list, server)
     sensor_list[1].update_cooling([0, 5000, 1000])
-    # sensor_list[2].update([0, 200000, 500])
+    sensor_list[2].update_feeding([200000, 500])
     
     while True:
         0

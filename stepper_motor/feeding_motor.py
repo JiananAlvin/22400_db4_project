@@ -5,14 +5,14 @@ import constant
 import _thread
 import random
 
-class FeedingMotor:
+
+class FeedingMotor():
     
     period = 0
-    duration = 0
+    duration = 10000 
     feedname = constant.FEEDNAME_FOOD_MOTOR
-    new_request = False # Used to kill the current feeding motor thread
 
-    def __init__(self, mode, period):
+    def __init__(self):
         self.pinStep = Pin(constant.STEPPER_MOTOR_FOOD_STEP_PIN_NO, Pin.OUT)
         self.pinDir = Pin(constant.STEPPER_MOTOR_FOOD_DIR_PIN_NO, Pin.OUT)
         self.pinDir(1)
@@ -21,38 +21,28 @@ class FeedingMotor:
 
 
 
-
     def read_value(self): # TODO
         """ Returns tuple (duration left, period)"""
-        return (duration, period)
+        return (self.duration, self.period)
 
-    def update(self, args): 
+    def update_feeding(self, args): 
         """ Updates the feeding motor with given args:
             args[0] = duration
             args[1] = period
             This method uses a diferent thread every time it is called
         """
-        self.new_request = True
-        # bit-banging for the food dosing pump
-        duration, period = args[0], args[1]
-        if self.new_request:
-            self.new_request = False
-            _thread.start_new_thread(update , (duration,period))
-   
-
-
-    
-    def update(self, duration, period):
-        """ aux function, """
         self.duration = duration
         self.period = period
-        
-    def start(self):
-        while(self.duration > 0):
-            cycle(self.duration, self.period)
-            self.duration-=1
 
-    def cycle(period):
+        
+
+    def start(self):
+        while(True):
+            while(self.duration > 0):
+                self.cycle(period)
+                self.duration-=1
+
+    def cycle(self, period):
         """Bit-banging for the food dosing pump.
         Represents each cycle
         """

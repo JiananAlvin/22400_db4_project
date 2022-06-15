@@ -4,7 +4,7 @@ import constant
 
 class CoolingMotor:
 
-    def __init__(self, period):
+    def __init__(self):
         self.feedname = constant.FEEDNAME_COOL_MOTOR
         self.pin_step = PWM(Pin(constant.STEPPER_MOTOR_COOL_STEP_PIN_NO))  # Step
         self.pin_dir = Pin(constant.STEPPER_MOTOR_COOL_DIR_PIN_NO, Pin.OUT)  # Direction
@@ -15,7 +15,8 @@ class CoolingMotor:
 
     # overwrite server method
     def read_value(self):
-        return 10
+        """ Returns tuple (freq, duty)"""
+        return (self.freq, self.duty)
 
 
     def update_cooling(self, args):
