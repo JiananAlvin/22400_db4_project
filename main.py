@@ -1,8 +1,10 @@
 from webserver.server import Server
 import _thread
 import time
+from experiment.experiment import Experiment
 from temperature_sensor.read_temp import TemperatureSensor
 from stepper_motor.cooling_motor import CoolingMotor
+from oled_screen.oled import oled
 
 
 class thread_args:
@@ -40,6 +42,10 @@ def main():
     thread_manager(sensor_list, server)
     sensor_list[1].update_cooling([0, 5000, 1000])
     sensor_list[2].update_feeding([200000, 500])
+    oled = oled()
+    oled.write(str(sensor_list[0].read_value()) + "degrees", 1)
+    oled.show()
+
     
     while True:
         0
@@ -47,5 +53,5 @@ def main():
     return 0
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
