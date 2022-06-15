@@ -49,9 +49,10 @@ def main():
     # oled.write(str(sensor_list[0].read_value()) + "degrees", 1)
     # oled.show()
 
-    
-    while True:
-        0
+    now = time.time()
+    while (time.time - now < 30 ):
+        sensor_list[0].read_value()
+        time.sleep(1)
     logger.end()
 
     return 0

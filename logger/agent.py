@@ -13,15 +13,15 @@ class Logger:
     def __init__(self):
         if self.folder in os.listdir():
             os.mkdir(self.folder)
-            self.logfile = open("./%s/%s" % (folder, filename), 'w')
+            self.logfile = open("./%s/%s" % (self.folder, self.filename), 'w')
             time_params = time.localtime()
-            self.logfile.write(init_string % time_format())
+            self.logfile.write(self.init_string % self.time_format())
 
 
-    def log(text):
-        self.logfile.write(log_string % time_format() + (text,))
+    def log(self, text):
+        self.logfile.write(self.log_string % self.time_format() + (text,))
 
-    def end():
+    def end(self):
         self.logfile.close()
 
     def time_format():
