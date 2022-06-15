@@ -1,12 +1,13 @@
-import ssd1306
-import tcs34725
+from machine import I2C, Pin
+import constant
+from . import ssd1306
 
 
 class oled:
 
     def __init__(self):
         # Define I2C
-        i2c = I2C(scl=Pin(22), sda=Pin(23), freq=100000)
+        i2c = I2C(scl=Pin(constant.OLED_SCL_NO), sda=Pin(constant.OLED_SDA_NO), freq=100000)
 
         # Define olef
         self.oled = ssd1306.SSD1306_I2C(128, 64, i2c)

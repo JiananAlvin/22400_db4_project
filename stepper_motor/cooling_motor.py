@@ -23,12 +23,11 @@ class CoolingMotor:
         """ Updates the feeding motor with given args:
             args[0] = direction
             args[1] = freq
-            args[2] = duty
         """
         # PWM for the cooling pump
         direction, freq, duty = args[0], args[1], args[2]
         self.pin_dir(direction)
         self.pin_step.freq(freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
-        self.pin_step.duty(duty)  # Duty cycle refers the amount of time the pulse is ON -> voltage
+        self.pin_step.duty(constant.DUTY_CYCLE)  # Duty cycle refers the amount of time the pulse is ON -> voltage
 
     
