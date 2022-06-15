@@ -3,7 +3,7 @@ import constant
 from . import ssd1306
 
 
-class oled:
+class Oled:
 
     def __init__(self):
         # Define I2C

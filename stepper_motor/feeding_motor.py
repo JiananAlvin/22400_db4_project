@@ -6,15 +6,16 @@ import _thread
 import random
 
 
-class FeedingMotor():
+class FeedingMotor:
     
     period = 0
     duration = 10000 
     feedname = constant.FEEDNAME_FOOD_MOTOR
+    self.logger = None
 
-    def __init__(self):
-        self.pinStep = Pin(constant.STEPPER_MOTOR_FOOD_STEP_PIN_NO, Pin.OUT)
-        self.pinDir = Pin(constant.STEPPER_MOTOR_FOOD_DIR_PIN_NO, Pin.OUT)
+    def __init__(self, logger):
+        self.pinStep = Pin(12, Pin.OUT)
+        self.pinDir = Pin(constant.STEPPER_MOTOR_FEED_DIR_PIN_NO, Pin.OUT)
         self.pinDir(1)
         self.pinStep.value(0)
         self.thread = _thread.start_new_thread(self.start, ())
@@ -31,15 +32,17 @@ class FeedingMotor():
             args[1] = period
             This method uses a diferent thread every time it is called
         """
-        self.duration = duration
-        self.period = period
+        self.duration = args[0]
+        self.period = args[1] 
+        logger.log("Updated feeding <%d,%d>" % (self.duration, self.period))
+
 
         
 
     def start(self):
         while(True):
             while(self.duration > 0):
-                self.cycle(period)
+                self.cycle(self.period)
                 self.duration-=1
 
     def cycle(self, period):
