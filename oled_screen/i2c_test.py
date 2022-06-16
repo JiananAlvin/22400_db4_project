@@ -12,8 +12,10 @@ oled.fill(0)
 
 # Define rgb sensor
 sensor = tcs34725.TCS34725(i2c)
-#sensor.integration_time(10) #value between 2.4 and 614.4.
-#sensor.gain(16) #must be a value of 1, 4, 16, 60
+
+
+# sensor.integration_time(10) #value between 2.4 and 614.4.
+# sensor.gain(16) #must be a value of 1, 4, 16, 60
 
 def color_rgb_bytes(color_raw):
     """Read the RGB color detected by the sensor.  Returns a 3-tuple of
@@ -25,9 +27,9 @@ def color_rgb_bytes(color_raw):
     # Avoid divide by zero errors ... if clear = 0 return black
     if clear == 0:
         return (0, 0, 0)
-    red   = int(pow((int((r/clear) * 256) / 255), 2.5) * 255)
-    green = int(pow((int((g/clear) * 256) / 255), 2.5) * 255)
-    blue  = int(pow((int((b/clear) * 256) / 255), 2.5) * 255)
+    red = int(pow((int((r / clear) * 256) / 255), 2.5) * 255)
+    green = int(pow((int((g / clear) * 256) / 255), 2.5) * 255)
+    blue = int(pow((int((b / clear) * 256) / 255), 2.5) * 255)
     # Handle possible 8-bit overflow
     if red > 255:
         red = 255
@@ -37,9 +39,10 @@ def color_rgb_bytes(color_raw):
         blue = 255
     return (red, green, blue)
 
+
 while True:
     # Read color sensor
-    r,g,b = color_rgb_bytes(sensor.read(True))
+    r, g, b = color_rgb_bytes(sensor.read(True))
 
     # Show results on OLED
     oled.fill(0)
