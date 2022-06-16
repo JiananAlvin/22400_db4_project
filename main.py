@@ -29,7 +29,7 @@ def publish_manager(sensor_list, server):
     for sensor in sensor_list:
         args = (thread_args(sensor, lock),)
         _thread.start_new_thread(server.publish_feed, args)
-        print("%s done" % sensor.feedname)
+        # print("%s done" % sensor.feedname)
         break
 
 
@@ -55,11 +55,10 @@ def main():
     #     time.sleep(1)
     # logger.end()
     pid = PID(0, 0, 0)
-    print("check 2")
     while True:
-        # k_p = server.subscribe_feed("P")
-        # k_i = server.subscribe_feed("I")
-        # k_d = server.subscribe_feed("D")
+        server.subscribe_feed("P")
+        server.subscribe_feed("I")
+        server.subscribe_feed("D")
         k_p = 900
         k_i = 0
         k_d = 0
@@ -68,8 +67,9 @@ def main():
         frequency = pid.update(temperature, constant.SET_POINT)
         sensor_list[1].update_cooling([1, frequency])
         print("The frequency is " + str(frequency))
-        print("===========================================")
-        utime.sleep_ms(500)
+        utime.sleep_ms(1000)
+        print("================================")
+        print(72)
     return 0
 
 

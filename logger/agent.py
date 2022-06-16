@@ -23,7 +23,6 @@ class Logger:
 
     def time_format(self):
         time_params = time.localtime()
-        print(time_params)
         return (time_params[2],
                 time_params[1],
                 time_params[0],

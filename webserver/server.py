@@ -1,4 +1,3 @@
-import _thread
 import network
 import time
 from umqtt.robust import MQTTClient
@@ -67,7 +66,6 @@ class Server:
     # format of feed name:  
     #   "ADAFRUIT_USERNAME/feeds/feed_name"
     def publish_feed(self, args):
-        print(args)
         sensor = args.sensor
         lock = args.lock
         print("publishing %s" % sensor.feedname)
@@ -75,11 +73,10 @@ class Server:
         while True:
             lock.acquire()
             feed_data = sensor.read_value()
-            print("value %s" % str(feed_data))
+            print("%s is %s" % (str(sensor.feedname), str(feed_data)))
 
             try:
                 self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
-                print("publishing for real %s" % sensor.feedname)
                 lock.release()
                 time.sleep(sensor.period)
             except KeyboardInterrupt:
@@ -88,7 +85,9 @@ class Server:
                 sys.exit()
 
     def cb(self, topic, msg):
-        print('Received data: Topic = {}, Msg = {}'.format(topic, msg))
+        # Convert bytes to floating point numbers
+        data = float(msg)
+        print('Received data: Topic = {}, Msg = {}'.format(topic, data))
 
     def subscribe_feed(self, args):
         """ Subscribes to a feed to receive data from Adafruit IO broker:
@@ -96,5 +95,5 @@ class Server:
         """
         feedname = args[0]
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feedname), 'utf-8')
-        self.mqtt_client.set_callback(Server.cb)
+        self.mqtt_client.set_callback(self.cb)
         self.mqtt_client.subscribe(mqtt_feedname)
