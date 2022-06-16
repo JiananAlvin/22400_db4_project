@@ -1,7 +1,7 @@
 import time
 import ustruct
 
-#const = lambda x:x
+# const = lambda x:x
 
 _COMMAND_BIT = const(0x80)
 
@@ -71,10 +71,10 @@ class TCS34725:
             self._register8(_REGISTER_ENABLE, enable | _ENABLE_PON)
             time.sleep_ms(3)
             self._register8(_REGISTER_ENABLE,
-                enable | _ENABLE_PON | _ENABLE_AEN)
+                            enable | _ENABLE_PON | _ENABLE_AEN)
         else:
             self._register8(_REGISTER_ENABLE,
-                enable & ~(_ENABLE_PON | _ENABLE_AEN))
+                            enable & ~(_ENABLE_PON | _ENABLE_AEN))
 
     def sensor_id(self):
         return self._register8(_REGISTER_SENSORID)
@@ -117,10 +117,10 @@ class TCS34725:
         r, g, b, c = data
         x = -0.14282 * r + 1.54924 * g + -0.95641 * b
         y = -0.32466 * r + 1.57837 * g + -0.73191 * b
-        z = -0.68202 * r + 0.77073 * g +  0.56332 * b
+        z = -0.68202 * r + 0.77073 * g + 0.56332 * b
         d = x + y + z
         n = (x / d - 0.3320) / (0.1858 - y / d)
-        cct = 449.0 * n**3 + 3525.0 * n**2 + 6823.3 * n + 5520.33
+        cct = 449.0 * n ** 3 + 3525.0 * n ** 2 + 6823.3 * n + 5520.33
         return cct, y
 
     def threshold(self, cycles=None, min_value=None, max_value=None):
@@ -152,16 +152,16 @@ class TCS34725:
         if value:
             raise ValueError("interrupt can only be cleared")
         self.i2c.writeto(self.address, b'\xe6')
-		
-	def html_rgb(data):
-		r, g, b, c = data
-		red = pow((int((r/c) * 256) / 255), 2.5) * 255
-		green = pow((int((g/c) * 256) / 255), 2.5) * 255
-		blue = pow((int((b/c) * 256) / 255), 2.5) * 255
-		return red, green, blue
 
-	def html_hex(data):
-		r, g, b = html_rgb(data)
-		return "{0:02x}{1:02x}{2:02x}".format(int(r),
-								 int(g),
-								 int(b))
+        def html_rgb(data):
+            r, g, b, c = data
+            red = pow((int((r / c) * 256) / 255), 2.5) * 255
+            green = pow((int((g / c) * 256) / 255), 2.5) * 255
+            blue = pow((int((b / c) * 256) / 255), 2.5) * 255
+            return red, green, blue
+
+        def html_hex(data):
+            r, g, b = html_rgb(data)
+            return "{0:02x}{1:02x}{2:02x}".format(int(r),
+                                                  int(g),
+                                                  int(b))

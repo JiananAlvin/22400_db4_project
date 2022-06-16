@@ -17,7 +17,7 @@ class Oled:
         """Writes to text in the indicated line
             line -> [0,1,2,3]
         """
-        self.oled.text(text, 0, line*8)
-        
+        self.oled.text(text, 0, line * 8)
+
     def show(self):
         self.oled.show()

@@ -1,10 +1,3 @@
-import utime
-from temperature_sensor.read_temp import TemperatureSensor
-from stepper_motor.cooling_motor import CoolingMotor
-import constant
-import sys
-
-
 class PID:
     def __init__(self, kp, ki, kd):
         self.k_p = float(kp)
@@ -54,5 +47,3 @@ class PID:
             self.k_p = self.k_p_backup
             self.k_i = self.k_i_backup
             self.k_d = self.k_d_backup
-
-

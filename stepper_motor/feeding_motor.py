@@ -1,4 +1,4 @@
-from machine import Pin, PWM
+from machine import Pin
 import utime
 import constant
 import _thread
