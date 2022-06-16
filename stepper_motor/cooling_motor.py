@@ -31,9 +31,9 @@ class CoolingMotor:
         """
         # PWM for the cooling pump
         self.direction, self.freq = args[0], args[1]
-        self.pin_dir(direction)
-        self.pin_step.freq(freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
+        self.pin_dir(self.direction)
+        self.pin_step.freq(self.freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
         self.pin_step.duty(constant.DUTY_CYCLE)  # Duty cycle refers the amount of time the pulse is ON -> voltage
-        logger.log("Updated feeding <%d,%d>" % (self.direction, self.freq))
+        self.logger.log("Updated feeding <%d,%d>" % (self.direction, self.freq))
 
     

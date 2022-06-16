@@ -24,7 +24,7 @@ class PID:
         setpoint: float; target temperature to achieve
         return: int; PWM frequency (temperature correction)
         """
-        error = float(setpoint) - float(temp)
+        error = float(temp) - float(setpoint)
         if self.last_error == 0:
             self.last_error = error  # catch first run error
 

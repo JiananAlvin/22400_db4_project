@@ -4,12 +4,9 @@ import utime
 # from experiment import Experiment
 from temperature_sensor.read_temp import TemperatureSensor
 from stepper_motor.cooling_motor import CoolingMotor
-from stepper_motor.feeding_motor import FeedingMotor
-from oled_screen.oled import Oled
 from logger.agent import Logger
 from PID.pid import PID
 import constant
-import time
 
 
 class thread_args:
@@ -19,9 +16,9 @@ class thread_args:
 
 
 def init_sensors(logger):
-    period = 30
+    period = 5
     sensor_list = []
-    sensor_list.append(TemperatureSensor(30, logger))
+    sensor_list.append(TemperatureSensor(period, logger))
     sensor_list.append(CoolingMotor(logger))
     # sensor_list.append(FeedingMotor(logger))
     return sensor_list
@@ -60,9 +57,12 @@ def main():
     pid = PID(0, 0, 0)
     print("check 2")
     while True:
-        k_p = server.subscribe_feed("P")
-        k_i = server.subscribe_feed("I")
-        k_d = server.subscribe_feed("D")
+        # k_p = server.subscribe_feed("P")
+        # k_i = server.subscribe_feed("I")
+        # k_d = server.subscribe_feed("D")
+        k_p = 900
+        k_i = 0
+        k_d = 0
         pid.reset(k_p, k_i, k_d)
         temperature = sensor_list[0].read_value()
         frequency = pid.update(temperature, constant.SET_POINT)
