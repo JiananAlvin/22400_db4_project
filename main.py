@@ -9,6 +9,7 @@ from oled_screen.oled import Oled
 from logger.agent import Logger
 from PID.pid import PID
 import constant
+import time
 
 
 class thread_args:
@@ -36,7 +37,6 @@ def publish_manager(sensor_list, server):
 
 
 def main():
-    print("chek1")
     logger = Logger()
     # server = Server("Redmip", "asd12345")
     server = Server("jxuiphone", "12345678")
@@ -58,19 +58,18 @@ def main():
     #     time.sleep(1)
     # logger.end()
     pid = PID(0, 0, 0)
-
     print("check 2")
     while True:
-        k_p = 1
-        k_i = 0
-        k_d = 0
+        k_p = server.subscribe_feed("P")
+        k_i = server.subscribe_feed("I")
+        k_d = server.subscribe_feed("D")
         pid.reset(k_p, k_i, k_d)
         temperature = sensor_list[0].read_value()
         frequency = pid.update(temperature, constant.SET_POINT)
         sensor_list[1].update_cooling([1, frequency])
-        print("The frequency is " + frequency)
+        print("The frequency is " + str(frequency))
         print("===========================================")
-        utime.sleep(500)
+        utime.sleep_ms(500)
     return 0
 
 

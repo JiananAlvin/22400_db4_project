@@ -15,11 +15,10 @@ class Server:
     ADAFRUIT_IO_USERNAME = 's204698'
     ADAFRUIT_IO_KEY = 'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
 
-
     def __init__(self, WIFI_SSID, WIFI_PASSWORD):
-        self.WIFI_SSID = WIFI_SSID  
+        self.WIFI_SSID = WIFI_SSID
         self.WIFI_PASSWORD = WIFI_PASSWORD
-        
+
         # turn off the WiFi Access Point
         ap_if = network.WLAN(network.AP_IF)
         ap_if.active(False)
@@ -43,7 +42,7 @@ class Server:
     # create a random MQTT clientID 
     def create_MQTT_clientID(self):
         random_num = int.from_bytes(os.urandom(3), 'little')
-        self.mqtt_client_id = bytes('client_'+str(random_num), 'utf-8')
+        self.mqtt_client_id = bytes('client_' + str(random_num), 'utf-8')
 
     # connect to Adafruit IO MQTT broker using unsecure TCP (port 1883)
     # 
@@ -57,7 +56,7 @@ class Server:
                                       user=self.ADAFRUIT_IO_USERNAME,
                                       password=self.ADAFRUIT_IO_KEY,
                                       ssl=False)
-        try:            
+        try:
             self.mqtt_client.connect()
         except Exception as e:
             print('could not connect to MQTT server {}{}'.format(type(e).__name__, e))
@@ -82,21 +81,16 @@ class Server:
                 self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
                 print("publishing for real %s" % sensor.feedname)
                 lock.release()
-                time.sleep(sensor.period)   
+                time.sleep(sensor.period)
             except KeyboardInterrupt:
                 print('Ctrl-C pressed...exiting')
                 self.mqtt_client.disconnect()
                 sys.exit()
-
-    def cb(self):
-        print()
 
     def subscribe_feed(self, args):
         """ Subscribes to a feed to receive data from Adafruit IO broker:
             args[0] = feedname
         """
         feedname = args[0]
-        mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feedname), 'utf-8')
-        self.mqtt_client.set_callback(self.cb)
-        self.mqtt_client.subscribe(mqtt_feedname)
-
+        # mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feedname), 'utf-8')
+        self.mqtt_client.subscribe(feedname, self.ADAFRUIT_IO_USERNAME)
