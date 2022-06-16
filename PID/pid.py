@@ -1,5 +1,10 @@
+import utime
+from temperature_sensor.read_temp import TemperatureSensor
+from stepper_motor.cooling_motor import CoolingMotor
+import constant
+
 class PID:
-    def __init__(self, kp=2, ki=0.0001, kd=2):
+    def __init__(self, kp, ki, kd):
         self.k_p = float(kp)
         self.k_i = float(ki)
         self.k_d = float(kd)
@@ -15,7 +20,7 @@ class PID:
         """
         temp: float; real-time temperature measured by NTC sensor
         setpoint: float; target temperature to achieve
-        return: float; temperature correction
+        return: int; PWM frequency (temperature correction)
         """
         error = float(setpoint) - float(temp)
         if self.last_error == 0:
@@ -32,7 +37,7 @@ class PID:
         I_value = self.integration * self.k_i
 
         # self.last_output = max(min(P_value + I_value + D_value, 15), -200)
-        self.last_output = P_value + I_value + D_value
+        self.last_output = int(P_value + I_value + D_value)
         return self.last_output
 
     def ki_enable(self, new_boolean):
@@ -47,3 +52,15 @@ class PID:
             self.k_p = self.k_p_backup
             self.k_i = self.k_i_backup
             self.k_d = self.k_d_backup
+
+    def pid_tuning(self, server, logger):
+        while True:
+            self.k_p = server.subscribe_feed("P")
+            self.k_i = server.subscribe_feed("I")
+            self.k_d = server.subscribe_feed("D")
+            temperature_sensor = TemperatureSensor(30, logger)
+            temperature = temperature_sensor.read_value()
+            frequency = self.update(temperature, constant.SET_POINT)
+            cooling_motor = CoolingMotor(logger)
+            cooling_motor.update_cooling(1, frequency)
+            utime.sleep(500)

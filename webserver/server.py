@@ -74,8 +74,6 @@ class Server:
         print("publishing %s" % sensor.feedname)
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, sensor.feedname), 'utf-8')
         while True:
-            while lock.locked():
-                True
             lock.acquire()
             feed_data = sensor.read_value()
             print("value %s" % str(feed_data))
@@ -89,3 +87,12 @@ class Server:
                 print('Ctrl-C pressed...exiting')
                 self.mqtt_client.disconnect()
                 sys.exit()
+
+    def subscribe_feed(self, args):
+        """ Subscribes to a feed to receive data from Adafruit IO broker:
+            args[0] = feedname
+        """
+        feedname = args[0]
+        mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feedname), 'utf-8')
+        self.mqtt_client.subscribe(mqtt_feedname)
+
