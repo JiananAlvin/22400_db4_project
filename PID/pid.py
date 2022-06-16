@@ -2,6 +2,8 @@ import utime
 from temperature_sensor.read_temp import TemperatureSensor
 from stepper_motor.cooling_motor import CoolingMotor
 import constant
+import sys
+
 
 class PID:
     def __init__(self, kp, ki, kd):
@@ -53,14 +55,4 @@ class PID:
             self.k_i = self.k_i_backup
             self.k_d = self.k_d_backup
 
-    def pid_tuning(self, server, logger):
-        while True:
-            self.k_p = server.subscribe_feed("P")
-            self.k_i = server.subscribe_feed("I")
-            self.k_d = server.subscribe_feed("D")
-            temperature_sensor = TemperatureSensor(30, logger)
-            temperature = temperature_sensor.read_value()
-            frequency = self.update(temperature, constant.SET_POINT)
-            cooling_motor = CoolingMotor(logger)
-            cooling_motor.update_cooling(1, frequency)
-            utime.sleep(500)
+

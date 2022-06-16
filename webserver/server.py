@@ -12,8 +12,8 @@ class Server:
     mqtt_client_id = None
     mqtt_client = None
     ADAFRUIT_IO_URL = 'io.adafruit.com'
-    ADAFRUIT_IO_USERNAME = 's194729'
-    ADAFRUIT_IO_KEY = 'aio_SImY77ltZfreTukLs1odFTwIvOHb'
+    ADAFRUIT_IO_USERNAME = 's204698'
+    ADAFRUIT_IO_KEY = 'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
 
 
     def __init__(self, WIFI_SSID, WIFI_PASSWORD):
@@ -88,11 +88,15 @@ class Server:
                 self.mqtt_client.disconnect()
                 sys.exit()
 
+    def cb(self):
+        print()
+
     def subscribe_feed(self, args):
         """ Subscribes to a feed to receive data from Adafruit IO broker:
             args[0] = feedname
         """
         feedname = args[0]
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feedname), 'utf-8')
+        self.mqtt_client.set_callback(self.cb)
         self.mqtt_client.subscribe(mqtt_feedname)
 
