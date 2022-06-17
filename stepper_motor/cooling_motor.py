@@ -6,9 +6,10 @@ class CoolingMotor:
     freq = 0
     duty = 0
     logger = None
+    feedname = constant.FEEDNAME_COOL_MOTOR
+
 
     def __init__(self, logger):
-        self.feedname = constant.FEEDNAME_COOL_MOTOR
         self.pin_step = PWM(Pin(constant.STEPPER_MOTOR_COOL_STEP_PIN_NO))  # Step
         self.pin_dir = Pin(constant.STEPPER_MOTOR_COOL_DIR_PIN_NO, Pin.OUT)  # Direction
         self.pin_dir(0)
@@ -32,4 +33,4 @@ class CoolingMotor:
         self.pin_step.freq(
             self.freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
         self.pin_step.duty(constant.DUTY_CYCLE)  # Duty cycle refers the amount of time the pulse is ON -> voltage
-        self.logger.log("Updated feeding <%d,%d>" % (self.direction, self.freq))
+        self.logger.log("Updated cooling <%d,%d>" % (self.direction, self.freq), self.feedname)

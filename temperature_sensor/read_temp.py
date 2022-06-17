@@ -119,7 +119,7 @@ class TemperatureSensor():
     THERM_B_COEFF = 3950
     ADC_MAX = 1023
     ADC_Vmax = 3.15
-    feedname = "Temperature"
+    feedname = constant.FEEDNAME_TEMP
     logger = None
 
     def __init__(self, period, logger):
@@ -150,5 +150,5 @@ class TemperatureSensor():
         steinhart = log(resistance / self.NOM_RES) / self.THERM_B_COEFF
         steinhart += 1.0 / (self.TEMP_NOM + 273.15)
         steinhart = (1.0 / steinhart) - 273.15
-        self.logger.log('Thermistor temperature: ' + str(steinhart))
+        self.logger.log('Thermistor temperature: ' + str(steinhart), self.feedname)
         return steinhart

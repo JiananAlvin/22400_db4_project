@@ -22,3 +22,5 @@ OLED_SDA_NO = 23
 # feednames
 FEEDNAME_COOL_MOTOR = "Cooling"
 FEEDNAME_FOOD_MOTOR = "Feeding"
+FEEDNAME_TEMP = "Temperature"
+FEEDNAME_RGBSENSOR = "RGBSensor"

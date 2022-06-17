@@ -29,7 +29,7 @@ class FeedingMotor:
         """
         self.duration = args[0]
         self.period = args[1]
-        logger.log("Updated feeding <%d,%d>" % (self.duration, self.period))
+        self.logger.log("Updated feeding <%d,%d>" % (self.duration, self.period), self.feedname)
 
     def start(self):
         while (True):

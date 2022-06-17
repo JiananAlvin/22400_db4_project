@@ -1,7 +1,10 @@
 import tcs34725
+import constant
 
 
 class rgbsensor:
+
+    feedname = constant.FEEDNAME_RGBSENSOR
 
     def __init__(self):
         # Define rgb sensor

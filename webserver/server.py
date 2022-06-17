@@ -79,7 +79,6 @@ class Server:
 
             try:
                 self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
-                print("publishing for real %s" % sensor.feedname)
                 lock.release()
                 time.sleep(sensor.period)
             except KeyboardInterrupt:
