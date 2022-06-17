@@ -122,8 +122,7 @@ class TemperatureSensor:
     feedname = "Temperature"
     logger = None
 
-    def __init__(self, period, logger):
-        self.period = period
+    def __init__(self, logger):
         adc = ADC(Pin(constant.TENP_SENS_ADC_PIN_NO))
         adc.atten(ADC.ATTN_11DB)
         adc.width(ADC.WIDTH_10BIT)

@@ -13,6 +13,7 @@ class Server:
     ADAFRUIT_IO_URL = 'io.adafruit.com'
     ADAFRUIT_IO_USERNAME = 's204698'
     ADAFRUIT_IO_KEY = 'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
+    topic_dict = dict()
 
     def __init__(self, WIFI_SSID, WIFI_PASSWORD):
         self.WIFI_SSID = WIFI_SSID
@@ -65,35 +66,39 @@ class Server:
     #
     # format of feed name:  
     #   "ADAFRUIT_USERNAME/feeds/feed_name"
-    def publish_feed(self, args):
-        sensor = args.sensor
-        lock = args.lock
-        print("publishing %s" % sensor.feedname)
+    def publish_feed(self, sensor):
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, sensor.feedname), 'utf-8')
-        while True:
-            lock.acquire()
-            feed_data = sensor.read_value()
-            print("%s is %s" % (str(sensor.feedname), str(feed_data)))
+        feed_data = sensor.read_value()
+        print("%s is %s" % (str(sensor.feedname), str(feed_data)))
 
-            try:
-                self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
-                lock.release()
-                time.sleep(sensor.period)
-            except KeyboardInterrupt:
-                print('Ctrl-C pressed...exiting')
-                self.mqtt_client.disconnect()
-                sys.exit()
+        try:
+            self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
+        except KeyboardInterrupt:
+            print('Ctrl-C pressed...exiting')
+            self.mqtt_client.disconnect()
+            sys.exit()
 
     def cb(self, topic, msg):
+        feedname = str(topic, 'utf-8')[-1]
         # Convert bytes to floating point numbers
         data = float(msg)
-        print('Received data: Topic = {}, Msg = {}'.format(topic, data))
+        print('Received data: Topic = {}, Msg = {}'.format(feedname, data))
+        self.topic_dict.update({feedname: data})
 
-    def subscribe_feed(self, args):
+    def subscribe_feed(self, feedname):
         """ Subscribes to a feed to receive data from Adafruit IO broker:
-            args[0] = feedname
         """
-        feedname = args[0]
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feedname), 'utf-8')
         self.mqtt_client.set_callback(self.cb)
         self.mqtt_client.subscribe(mqtt_feedname)
+
+    def fetch_data(self, feedname):
+
+
+        # print(self.topic_dict)
+        # print(feedname)
+        try:
+            return self.topic_dict[feedname]
+        except KeyError:
+            return 0
+
