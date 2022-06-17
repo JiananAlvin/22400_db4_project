@@ -10,12 +10,13 @@ class FeedingMotor:
     feedname = constant.FEEDNAME_FOOD_MOTOR
     self.logger = None
 
-    def __init__(self, logger, thread_pool):
+    def __init__(self, logger, thread_manager):
         self.pinStep = Pin(12, Pin.OUT)
         self.pinDir = Pin(constant.STEPPER_MOTOR_FEED_DIR_PIN_NO, Pin.OUT)
         self.pinDir(1)
         self.pinStep.value(0)
-        self.thread =  _thread.start_new_thread(self.start, ())
+        thread_manager.run(self.start, ())
+
 
     def read_value(self):  # TODO
         """ Returns tuple (duration left, period)"""

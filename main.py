@@ -20,10 +20,10 @@ class Thread_manager:
     thread_pool = []
     
     def run(self,function, args):
-        self.thread_pool.append(_thread.start_new_thread(server.publish_feed, args))
+        self.thread_pool.append(_thread.start_new_thread(function, args))
 
     def kill(self):
-        for thread in thread_pool:
+        for thread in self.thread_pool:
             thread.exit()
 
 
@@ -31,12 +31,13 @@ class Thread_manager:
 
 
 
-def init_sensors(logger):
+def init_sensors(logger, thread_manager):
     period = 5
     sensor_list = []
-    sensor_list.append(TemperatureSensor(period, logger))
-    sensor_list.append(CoolingMotor(logger))
-    # sensor_list.append(FeedingMotor(logger))
+    temperature_sensor = TemperatureSensor(period, logger, thread_manager)
+    sensor_list.append(temperature_sensor)
+    sensor_list.append(CoolingMotor(logger, thread_manager, temperature_sensor))
+    #sensor_list.append(FeedingMotor(logger, thread_manager))
     return sensor_list
 
 
@@ -55,12 +56,12 @@ def main():
     thread_manager = Thread_manager()
     logger = Logger()
     # server = Server("Redmip", "asd12345")
-    server = Server("jxuiphone", "12345678")
-    server.create_MQTT_clientID()
-    server.connect_MQTT()
+    #server = Server("jxuiphone", "12345678")
+    #server.create_MQTT_clientID()
+    #server.connect_MQTT()
     # server.publish_feed(temperature_sensor)
-    sensor_list = init_sensors(logger)
-    publish_manager(sensor_list, server)
+    sensor_list = init_sensors(logger, thread_manager)
+    #publish_manager(sensor_list, server)
 
     # sensor_list[1].update_cooling([0, 5000, 1000])
     # sensor_list[2].update_feeding([200000, 500])
@@ -73,22 +74,22 @@ def main():
     #     sensor_list[0].read_value()
     #     time.sleep(1)
     # logger.end()
-    pid = PID(0, 0, 0)
     print("check 2")
+    # while True:
+    #     # k_p = server.subscribe_feed("P")
+    #     # k_i = server.subscribe_feed("I")
+    #     # k_d = server.subscribe_feed("D")
+    #     k_p = 900
+    #     k_i = 0
+    #     k_d = 0
+    #     pid.reset(k_p, k_i, k_d)
+    #     temperature = sensor_list[0].read_value()
+    #     frequency = pid.update(temperature, constant.SET_POINT)
+    #     sensor_list[1].update_cooling([1, frequency])
+    #     print("The frequency is " + str(frequency))
+    #     print("===========================================")
     while True:
-        # k_p = server.subscribe_feed("P")
-        # k_i = server.subscribe_feed("I")
-        # k_d = server.subscribe_feed("D")
-        k_p = 900
-        k_i = 0
-        k_d = 0
-        pid.reset(k_p, k_i, k_d)
-        temperature = sensor_list[0].read_value()
-        frequency = pid.update(temperature, constant.SET_POINT)
-        sensor_list[1].update_cooling([1, frequency])
-        print("The frequency is " + str(frequency))
-        print("===========================================")
-        utime.sleep_ms(500)
+        pass
     thread_manager.kill()
     return 0
 

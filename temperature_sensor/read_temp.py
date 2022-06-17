@@ -122,7 +122,7 @@ class TemperatureSensor():
     feedname = constant.FEEDNAME_TEMP
     logger = None
 
-    def __init__(self, period, logger):
+    def __init__(self, period, logger, thread_manager):
         self.period = period
         adc = ADC(Pin(constant.TENP_SENS_ADC_PIN_NO))
         adc.atten(ADC.ATTN_11DB)
@@ -138,13 +138,13 @@ class TemperatureSensor():
 
         # Average of the NUM_SAMPLES and look it up in the table
         raw_average = sum(raw_read) / self.NUM_SAMPLES
-        self.logger.log('raw_avg = ' + str(raw_average))
-        self.logger.log('V_measured = ' + str(self.adc_V_lookup[round(raw_average)]))
+        #self.logger.log('raw_avg = ' + str(raw_average))
+        #self.logger.log('V_measured = ' + str(self.adc_V_lookup[round(raw_average)]))
 
         # Convert to resistance
         raw_average = self.ADC_MAX * self.adc_V_lookup[round(raw_average)] / self.ADC_Vmax
         resistance = (self.SER_RES * raw_average) / (self.ADC_MAX - raw_average)
-        self.logger.log('Thermistor resistance: {} ohms'.format(resistance))
+        #self.logger.log('Thermistor resistance: {} ohms'.format(resistance))
 
         # Convert to temperature
         steinhart = log(resistance / self.NOM_RES) / self.THERM_B_COEFF

@@ -24,3 +24,9 @@ FEEDNAME_COOL_MOTOR = "Cooling"
 FEEDNAME_FOOD_MOTOR = "Feeding"
 FEEDNAME_TEMP = "Temperature"
 FEEDNAME_RGBSENSOR = "RGBSensor"
+
+
+# PID
+P = 1617.2
+I = 766.4
+D = 214.2

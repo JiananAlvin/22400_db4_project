@@ -80,7 +80,7 @@ class Server:
             try:
                 self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)
                 lock.release()
-                time.sleep(sensor.period)
+                time.sleep(10)
             except KeyboardInterrupt:
                 print('Ctrl-C pressed...exiting')
                 self.mqtt_client.disconnect()
