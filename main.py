@@ -9,10 +9,26 @@ from PID.pid import PID
 import constant
 
 
+
+
 class thread_args:
     def __init__(self, sensor, lock):
         self.sensor = sensor
         self.lock = lock
+
+class Thread_manager:
+    thread_pool = []
+    
+    def run(self,function, args):
+        self.thread_pool.append(_thread.start_new_thread(server.publish_feed, args))
+
+    def kill(self):
+        for thread in thread_pool:
+            thread.exit()
+
+
+
+
 
 
 def init_sensors(logger):
@@ -24,16 +40,19 @@ def init_sensors(logger):
     return sensor_list
 
 
-def publish_manager(sensor_list, server):
+def publish_manager(sensor_list, server, thread_manager):
     lock = _thread.allocate_lock()
     for sensor in sensor_list:
         args = (thread_args(sensor, lock),)
-        _thread.start_new_thread(server.publish_feed, args)
+        thread_manager.run(server.publish_feed, args)
+        #_thread.start_new_thread(server.publish_feed, args)
         print("%s done" % sensor.feedname)
         break
+    
 
 
 def main():
+    thread_manager = Thread_manager()
     logger = Logger()
     # server = Server("Redmip", "asd12345")
     server = Server("jxuiphone", "12345678")
@@ -70,6 +89,7 @@ def main():
         print("The frequency is " + str(frequency))
         print("===========================================")
         utime.sleep_ms(500)
+    thread_manager.kill()
     return 0
 
 
