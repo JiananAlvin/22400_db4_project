@@ -12,7 +12,8 @@ import constant
 def main():
     logger = Logger()
     # server = Server("Redmip", "asd12345")
-    server = Server("jxuiphone", "12345678")
+    #server = Server("jxuiphone", "12345678")
+    server = Server("a1c3", "nmro9920")
     server.create_MQTT_clientID()
     server.connect_MQTT()
 
