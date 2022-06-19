@@ -9,7 +9,7 @@ class Logger:
     logfile = None
     init_string = "LOG AGENT STARTED\n%s\n\nLocal time: %d/%d/%d %d:%d:%d\n"
     log_string = "%d/%d/%d %d:%d:%d -> %s\n"
-    logfile_names = [constant.FEEDNAME_TEMP,constant.FEEDNAME_COOL_MOTOR,constant.FEEDNAME_FOOD_MOTOR,constant.FEEDNAME_RGBSENSOR]
+    logfile_names = [constant.FEEDNAME_TEMP,constant.FEEDNAME_COOL_MOTOR,constant.FEEDNAME_FOOD_MOTOR,constant.FEEDNAME_LIGHTSENSOR]
     logfile_pool = {}
     def __init__(self):
         if self.folder not in os.listdir():

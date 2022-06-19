@@ -122,15 +122,17 @@ class TemperatureSensor():
     feedname = constant.FEEDNAME_TEMP
     logger = None
 
-    def __init__(self, period, logger, thread_manager):
+    def __init__(self, period, logger, thread_manager, oled):
         self.period = period
         adc = ADC(Pin(constant.TENP_SENS_ADC_PIN_NO))
         adc.atten(ADC.ATTN_11DB)
         adc.width(ADC.WIDTH_10BIT)
         self.temp_sens = adc
         self.logger = logger
+        print("Temperature sensor started")
+        self.oled = oled
 
-    def read_value(self):
+    def read_value(self, log1 = False):
         raw_read = []
         # Collect NUM_SAMPLES
         for i in range(1, self.NUM_SAMPLES + 1):
@@ -150,5 +152,25 @@ class TemperatureSensor():
         steinhart = log(resistance / self.NOM_RES) / self.THERM_B_COEFF
         steinhart += 1.0 / (self.TEMP_NOM + 273.15)
         steinhart = (1.0 / steinhart) - 273.15
-        self.logger.log('Thermistor temperature: ' + str(steinhart), self.feedname)
+        print(str(steinhart))
+        if log1==True:
+            self.logger.log('Thermistor temperature:' + str(steinhart), self.feedname)
+            # TODO uncomment once oled screen is fixed
+            # self.oledaux(steinhart)
         return steinhart
+
+
+    def oledaux(self, temp):
+        keyword = ""
+        if temp > 30: 
+            keyword = "HELL"
+        elif temp > 20:
+            keyword = "NICE"
+        else:
+            keyword = "ARTIC"
+        self.oled.write("Temperature: %5.2f" % temp, 0)
+        self.oled.write(keyword, 1)
+        self.oled.show()
+
+
+        

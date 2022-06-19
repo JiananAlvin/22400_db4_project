@@ -17,3 +17,5 @@ ampy -p /dev/ttyUSB0 put ./stepper_motor/feeding_motor.py /stepper_motor/feeding
 ampy -p /dev/ttyUSB0 put ./temperature_sensor/linearize.py /temperature_sensor/linearize.py
 ampy -p /dev/ttyUSB0 put ./temperature_sensor/read_temp.py /temperature_sensor/read_temp.py
 ampy -p /dev/ttyUSB0 put ./webserver/server.py /webserver/server.py
+ampy -p /dev/ttyUSB0 put ./led/led.py /led/led.py
+ampy -p /dev/ttyUSB0 put ./led/light_sensor.py /led/light_sensor.py

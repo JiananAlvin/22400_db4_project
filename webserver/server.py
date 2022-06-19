@@ -4,7 +4,7 @@ import time
 from umqtt.robust import MQTTClient
 import os
 import sys
-
+import constant
 
 class Server:
     WIFI_SSID = None
@@ -12,12 +12,12 @@ class Server:
     mqtt_client_id = None
     mqtt_client = None
     ADAFRUIT_IO_URL = 'io.adafruit.com'
-    ADAFRUIT_IO_USERNAME = 's204698'
-    ADAFRUIT_IO_KEY = 'aio_sesd85QOGDYHMJT2MZ92xg4hf8v3'
+    ADAFRUIT_IO_USERNAME = constant.ADAFRUIT_IO_USERNAME
+    ADAFRUIT_IO_KEY = constant.ADAFRUIT_IO_KEY
 
-    def __init__(self, WIFI_SSID, WIFI_PASSWORD):
-        self.WIFI_SSID = WIFI_SSID
-        self.WIFI_PASSWORD = WIFI_PASSWORD
+    def __init__(self):
+        self.WIFI_SSID = constant.WIFI_SSID
+        self.WIFI_PASSWORD = constant.WIFI_PASSWORD
 
         # turn off the WiFi Access Point
         ap_if = network.WLAN(network.AP_IF)
@@ -26,7 +26,7 @@ class Server:
         # connect the device to the WiFi network
         wifi = network.WLAN(network.STA_IF)
         wifi.active(True)
-        wifi.connect(WIFI_SSID, WIFI_PASSWORD)
+        wifi.connect(self.WIFI_SSID,self.WIFI_PASSWORD)
 
         # wait until the device is connected to the WiFi network
         MAX_ATTEMPTS = 20
@@ -34,10 +34,12 @@ class Server:
         while not wifi.isconnected() and attempt_count < MAX_ATTEMPTS:
             attempt_count += 1
             time.sleep(1)
+            print("Trying to connect %d" % attempt_count)
 
         if attempt_count == MAX_ATTEMPTS:
             print('could not connect to the WiFi network')
             sys.exit()
+        print("Connected")
 
     # create a random MQTT clientID 
     def create_MQTT_clientID(self):
@@ -58,6 +60,7 @@ class Server:
                                       ssl=False)
         try:
             self.mqtt_client.connect()
+            print("Connected to MQTT server")
         except Exception as e:
             print('could not connect to MQTT server {}{}'.format(type(e).__name__, e))
             sys.exit()
@@ -66,10 +69,8 @@ class Server:
     #
     # format of feed name:  
     #   "ADAFRUIT_USERNAME/feeds/feed_name"
-    def publish_feed(self, args):
-        print(args)
-        sensor = args.sensor
-        lock = args.lock
+    def publish_feed(self, sensor, lock):
+        print(sensor)
         print("publishing %s" % sensor.feedname)
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, sensor.feedname), 'utf-8')
         while True:

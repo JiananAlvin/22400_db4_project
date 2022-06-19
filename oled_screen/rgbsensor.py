@@ -1,5 +1,6 @@
 import tcs34725
 import constant
+import time
 
 
 class rgbsensor:

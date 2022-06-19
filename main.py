@@ -4,23 +4,29 @@ import utime
 # from experiment import Experiment
 from temperature_sensor.read_temp import TemperatureSensor
 from stepper_motor.cooling_motor import CoolingMotor
+from stepper_motor.feeding_motor import FeedingMotor
 from logger.agent import Logger
+from oled_screen.oled import Oled
 from PID.pid import PID
+from led.light_sensor import Light_Sensor
 import constant
 
 
 
 
-class thread_args:
-    def __init__(self, sensor, lock):
-        self.sensor = sensor
-        self.lock = lock
 
 class Thread_manager:
-    thread_pool = []
-    
+    def __init__(self):
+        self.thread_pool = []
+        self.lock = _thread.allocate_lock()
+
     def run(self,function, args):
-        self.thread_pool.append(_thread.start_new_thread(function, args))
+        try:
+            print("starting thread %s with args %s " % (function.__name__, args))
+            args = args + (self.lock,)
+            self.thread_pool.append(_thread.start_new_thread(function, args))
+        except:
+            print("Exception in thread %s" % function.__name__)
 
     def kill(self):
         for thread in self.thread_pool:
@@ -32,62 +38,60 @@ class Thread_manager:
 
 
 def init_sensors(logger, thread_manager):
+    """ """
     period = 5
     sensor_list = []
-    temperature_sensor = TemperatureSensor(period, logger, thread_manager)
+
+    temperature_sensor = TemperatureSensor(period, logger, thread_manager, None)
+   # TODO uncomment after oled screen is fixed and delete line above
+   # temperature_sensor = TemperatureSensor(period, logger, thread_manager, Oled())
+    light_sensor = Light_Sensor(logger)
+    sensor_list.append(light_sensor)
     sensor_list.append(temperature_sensor)
     sensor_list.append(CoolingMotor(logger, thread_manager, temperature_sensor))
-    #sensor_list.append(FeedingMotor(logger, thread_manager))
+
+    sensor_list.append(FeedingMotor(logger, thread_manager, light_sensor))
+        
+    print("Sensors inited")
     return sensor_list
 
 
-def publish_manager(sensor_list, server, thread_manager):
-    lock = _thread.allocate_lock()
+def publish_manager(sensor_list, thread_manager):
+    server = Server()
+    server.create_MQTT_clientID()
+    server.connect_MQTT()
+    print(sensor_list)
     for sensor in sensor_list:
-        args = (thread_args(sensor, lock),)
+        args = (sensor,)
         thread_manager.run(server.publish_feed, args)
-        #_thread.start_new_thread(server.publish_feed, args)
-        print("%s done" % sensor.feedname)
-        break
-    
+        print("Start publishing thread for %s" % sensor.feedname)
+        
+ 
+def subcriber():
+    """ Call this function on main to run the adafruit PID experiment """
+    while True:
+        k_p = server.subscribe_feed("P")
+        k_i = server.subscribe_feed("I")
+        k_d = server.subscribe_feed("D")
+        # k_p = 900
+        # k_i = 0
+        # k_d = 0
+        pid.reset(k_p, k_i, k_d)
+        temperature = sensor_list[0].read_value()
+        frequency = pid.update(temperature, constant.SET_POINT)
+        sensor_list[1].update_cooling([1, frequency])
+        print("The frequency is " + str(frequency))
+        print("===========================================")
 
 
 def main():
     thread_manager = Thread_manager()
     logger = Logger()
-    # server = Server("Redmip", "asd12345")
-    #server = Server("jxuiphone", "12345678")
-    #server.create_MQTT_clientID()
-    #server.connect_MQTT()
-    # server.publish_feed(temperature_sensor)
+    print("Logger started")
     sensor_list = init_sensors(logger, thread_manager)
-    #publish_manager(sensor_list, server)
+    publish_manager(sensor_list[:-2], thread_manager) # no need to publish feeding and cooling motor for now
 
-    # sensor_list[1].update_cooling([0, 5000, 1000])
-    # sensor_list[2].update_feeding([200000, 500])
-    # oled = Oled()
-    # oled.write(str(sensor_list[0].read_value()) + "degrees", 1)
-    # oled.show()
 
-    # now = time.time()
-    # while (time.time - now < 30 ):
-    #     sensor_list[0].read_value()
-    #     time.sleep(1)
-    # logger.end()
-    print("check 2")
-    # while True:
-    #     # k_p = server.subscribe_feed("P")
-    #     # k_i = server.subscribe_feed("I")
-    #     # k_d = server.subscribe_feed("D")
-    #     k_p = 900
-    #     k_i = 0
-    #     k_d = 0
-    #     pid.reset(k_p, k_i, k_d)
-    #     temperature = sensor_list[0].read_value()
-    #     frequency = pid.update(temperature, constant.SET_POINT)
-    #     sensor_list[1].update_cooling([1, frequency])
-    #     print("The frequency is " + str(frequency))
-    #     print("===========================================")
     while True:
         pass
     thread_manager.kill()
