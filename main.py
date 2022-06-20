@@ -10,7 +10,8 @@ from oled_screen.oled import Oled
 from PID.pid import PID
 from led.light_sensor import Light_Sensor
 import constant
-
+import time
+import machine
 
 
 
@@ -19,18 +20,33 @@ class Thread_manager:
     def __init__(self):
         self.thread_pool = []
         self.lock = _thread.allocate_lock()
+        self.button = machine.Pin(constant.BUTTON_PIN_NO, machine.Pin.IN, machine.Pin.PULL_UP)
+
+
 
     def run(self,function, args):
         try:
-            print("starting thread %s with args %s " % (function.__name__, args))
             args = args + (self.lock,)
-            self.thread_pool.append(_thread.start_new_thread(function, args))
+            tid = _thread.start_new_thread(function, args)
+            #tid =  _thread.get_ident()
+            print("starting thread %s with args %s and TID: %s " % (function.__name__, args, tid))
+
+            self.thread_pool.append(tid)
         except:
             print("Exception in thread %s" % function.__name__)
 
     def kill(self):
-        for thread in self.thread_pool:
+        print(self.thread_pool)
+        for thread in self.thread_pool[1:]:
+            print("Ending thread: %s" % thread)
             thread.exit()
+
+    def manage_threads(self):
+        print("Managing threads")
+        while self.button.value():
+            pass
+        print("Button is pressed RIP threads")
+        self.kill()
 
 
 
@@ -42,9 +58,9 @@ def init_sensors(logger, thread_manager):
     period = 5
     sensor_list = []
 
-    temperature_sensor = TemperatureSensor(period, logger, thread_manager, None)
+    #temperature_sensor = TemperatureSensor(period, logger, thread_manager, None)
    # TODO uncomment after oled screen is fixed and delete line above
-   # temperature_sensor = TemperatureSensor(period, logger, thread_manager, Oled())
+    temperature_sensor = TemperatureSensor(period, logger, thread_manager, Oled())
     light_sensor = Light_Sensor(logger)
     sensor_list.append(light_sensor)
     sensor_list.append(temperature_sensor)
@@ -84,17 +100,35 @@ def subcriber():
         print("===========================================")
 
 
+
+def PID_experiment(logger, cooling_motor):
+    P = constant.P
+    I = constant.I
+
+    for D in range(0, 500, 100):
+        i = D
+        print("Experiment for D: %d started" % D)
+        cooling_motor.pid = PID(P, I, D)
+
+        for name in logger.logfile_names:
+            print("here name:%s" % name)
+            text = "Updated PID\nP: %d  I: %d  D:  %d"
+            logger.log(text % (P,I,D), name)
+        input("Press somewhere to start the next experiment")
+    
+    print("D is %d" % i)
+
+
 def main():
     thread_manager = Thread_manager()
     logger = Logger()
     print("Logger started")
     sensor_list = init_sensors(logger, thread_manager)
     publish_manager(sensor_list[:-2], thread_manager) # no need to publish feeding and cooling motor for now
-
-
+    PID_experiment(logger, sensor_list[-2])
+    #thread_manager.manage_threads()
     while True:
         pass
-    thread_manager.kill()
     return 0
 
 

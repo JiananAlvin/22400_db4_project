@@ -15,7 +15,7 @@ DUTY_CYCLE = int(0.48 * 1023)
 TENP_SENS_ADC_PIN_NO = 32
 
 # the desired temperature
-SET_POINT = 20
+SET_POINT = 18
 
 # pins for the OLED screen
 OLED_SCL_NO = 22
@@ -23,7 +23,7 @@ OLED_SDA_NO = 23
 
 # pin for the LED
 LED_PIN_NO = 21 # TODO change to the correct one 
-LIGHT_SENSOR_PIN_NO = 39
+LIGHT_SENSOR_PIN_NO = 34
 
 #Formula contants TODO update
 # FLORA
@@ -41,16 +41,19 @@ FEEDNAME_LIGHTSENSOR = "Light_Sensor"
 
 
 # PID
-P = 1417.2
-I = 566.4
+P = 303.7
+I = 102.2
 D = 114.2
 
-
+# 
 
 # AdafruitConstants
 
-WIFI_SSID = "FTTH_AI6519"
-WIFI_PASSWORD  = "plyems8drabU"
+WIFI_SSID = "Redmip"
+WIFI_PASSWORD  = "asd12345"
 ADAFRUIT_IO_USERNAME = 's194729'
 ADAFRUIT_IO_KEY = 'aio_SImY77ltZfreTukLs1odFTwIvOHb'
 
+
+# constant thread manager
+BUTTON_PIN_NO = 39

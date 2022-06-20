@@ -29,7 +29,7 @@ class Server:
         wifi.connect(self.WIFI_SSID,self.WIFI_PASSWORD)
 
         # wait until the device is connected to the WiFi network
-        MAX_ATTEMPTS = 20
+        MAX_ATTEMPTS = 2**32-1
         attempt_count = 0
         while not wifi.isconnected() and attempt_count < MAX_ATTEMPTS:
             attempt_count += 1
@@ -76,7 +76,7 @@ class Server:
         while True:
             lock.acquire()
             feed_data = sensor.read_value()
-            print("value %s" % str(feed_data))
+            #print("value %s" % str(feed_data))
 
             try:
                 self.mqtt_client.publish(mqtt_feedname, bytes(str(feed_data), 'utf-8'), qos=0)

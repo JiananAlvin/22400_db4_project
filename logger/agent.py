@@ -8,7 +8,7 @@ class Logger:
     filename = "log"
     logfile = None
     init_string = "LOG AGENT STARTED\n%s\n\nLocal time: %d/%d/%d %d:%d:%d\n"
-    log_string = "%d/%d/%d %d:%d:%d -> %s\n"
+    log_string = "%d/%d/%d %02d:%02d:%02d -> %s\n"
     logfile_names = [constant.FEEDNAME_TEMP,constant.FEEDNAME_COOL_MOTOR,constant.FEEDNAME_FOOD_MOTOR,constant.FEEDNAME_LIGHTSENSOR]
     logfile_pool = {}
     def __init__(self):
@@ -16,13 +16,15 @@ class Logger:
             os.mkdir(self.folder)
 
         for name in self.logfile_names:
-            logfile = open("./%s/%s%s" % (self.folder, self.filename, name), 'w')
+            logfile = open("./%s/%s%s" % (self.folder, self.filename, name), 'w+')
             logfile.write(self.init_string % ((name,) + (self.time_format())))
             self.logfile = logfile
             self.logfile_pool[name] = logfile
 
 
     def log(self, text, name):
+        
+        print("We are logging in %s : %s" % (name,text))
         self.logfile_pool[name].write(self.log_string % (self.time_format() + (text,)))
 
     def end(self):

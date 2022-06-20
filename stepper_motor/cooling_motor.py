@@ -5,8 +5,8 @@ from temperature_sensor.read_temp import TemperatureSensor
 import time
 
 class CoolingMotor:
-    freq = 0
-    duty = 0
+    freq = 100
+    duty = 1
     logger = None
     feedname = constant.FEEDNAME_COOL_MOTOR
     pid = PID(constant.P,constant.I,constant.D)
@@ -30,16 +30,17 @@ class CoolingMotor:
         """ Returns freq"""
         return self.freq
 
-    def update_cooling(self, args):
+    def update_cooling(self):
         """ Updates the feeding motor with given args:
             args[0] = direction
             args[1] = freq
         """
         # PWM for the cooling pump
-        self.direction, self.freq = args[0], args[1]
+        self.direction = 1
         self.pin_dir(self.direction)
-        self.pin_step.freq(
-            self.freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
+        if self.freq < 1:
+            self.freq = 1   
+        self.pin_step.freq(self.freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
         self.pin_step.duty(constant.DUTY_CYCLE)  # Duty cycle refers the amount of time the pulse is ON -> voltage
         self.logger.log("Updated cooling <%d,%d>" % (self.direction, self.freq), self.feedname)
 
@@ -50,4 +51,6 @@ class CoolingMotor:
         while True:
             time.sleep(period)
             self.freq = self.pid.update(temperature_sensor.read_value(log1=True), constant.SET_POINT)
-            self.update_cooling([1, self.freq])
+            print("Updating freq on coooling motor: %f" % self.freq)
+
+            self.update_cooling()

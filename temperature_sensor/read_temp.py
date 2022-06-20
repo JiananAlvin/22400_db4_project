@@ -156,7 +156,7 @@ class TemperatureSensor():
         if log1==True:
             self.logger.log('Thermistor temperature:' + str(steinhart), self.feedname)
             # TODO uncomment once oled screen is fixed
-            # self.oledaux(steinhart)
+            self.oledaux(steinhart)
         return steinhart
 
 
@@ -168,9 +168,10 @@ class TemperatureSensor():
             keyword = "NICE"
         else:
             keyword = "ARTIC"
-        self.oled.write("Temperature: %5.2f" % temp, 0)
-        self.oled.write(keyword, 1)
+        self.oled.oled.fill(0)
+        self.oled.write("Temperature: ", 0)
+        self.oled.write("%s C" % str(temp), 1)
+        #self.oled.write(keyword, 2 )
         self.oled.show()
 
 
-        
