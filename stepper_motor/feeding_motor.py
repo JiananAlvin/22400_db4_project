@@ -4,7 +4,8 @@ import constant
 import _thread
 import math
 import utime
-
+from led.light_sensor import Light_Sensor
+from logger.agent import Logger
 
 class FeedingMotor:
     period = 0
@@ -16,15 +17,41 @@ class FeedingMotor:
         self.pinDir = Pin(constant.STEPPER_MOTOR_FEED_DIR_PIN_NO, Pin.OUT)
         self.pinDir(1)
         self.pinStep.value(0)
-        thread_manager.run(self.start, ())
         self.start_up_time = time.time()
         self.light_sensor = light_sensor
         self.logger = logger
 
+        thread_manager.run(self.start, ())
+
+    
+
+
+    # Automation 
+    def t(self):
+        """ Returns time passed since start up"""
+        return time.time() - self.start_up_time
+
+    # TODO change this to the actual content of flora's formula
+    def FlorasFormula(self):
+        """ needs to be filled """
+        light_intensity = self.light_sensor.read_value()
+        t = self.t()
+        pump_rate = 0
+        return pump_rate
+
+    # TODO change this to the actual content of Jianan's formula
+    def JianansFormula(self, pump_rate):
+        """ needs to be filled """
+        
+        period = 10
+        duration = 100
+        self.update_feeding([period, duration])
+
+
 
     def read_value(self):  # TODO
         """ Returns 0 for now"""
-        return 0
+        return self.duration
 
     def update_feeding(self, args):
         """ Updates the feeding motor with given args:
@@ -58,24 +85,3 @@ class FeedingMotor:
 
 
 
-
-    # Automation 
-    def t(self):
-        """ Returns time passed since start up"""
-        return time.time() - self.start_up_time
-
-    # TODO change this to the actual content of flora's formula
-    def FlorasFormula(self):
-        """ needs to be filled """
-        light_intensity = self.light_sensor.read_value()
-        t = self.t()
-        pump_rate = 0
-        return pump_rate
-
-    # TODO change this to the actual content of Jianan's formula
-    def JianansFormula(self, pump_rate):
-        """ needs to be filled """
-        
-        period = 10
-        duration = 100
-        self.update_feeding([period, duration])

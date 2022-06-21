@@ -23,7 +23,7 @@ OLED_SDA_NO = 23
 
 # pin for the LED
 LED_PIN_NO = 21 # TODO change to the correct one 
-LIGHT_SENSOR_PIN_NO = 34
+LIGHT_SENSOR_PIN_NO = 39
 
 #Formula contants TODO update
 # FLORA
@@ -41,9 +41,9 @@ FEEDNAME_LIGHTSENSOR = "Light_Sensor"
 
 
 # PID
-P = 303.7
-I = 102.2
-D = 114.2
+P = 303.25
+I = 50
+D = 103.2
 
 # 
 
@@ -56,4 +56,4 @@ ADAFRUIT_IO_KEY = 'aio_SImY77ltZfreTukLs1odFTwIvOHb'
 
 
 # constant thread manager
-BUTTON_PIN_NO = 39
+BUTTON_PIN_NO = 34  

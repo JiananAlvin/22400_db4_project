@@ -94,7 +94,10 @@ class Server:
         """ Subscribes to a feed to receive data from Adafruit IO broker:
             args[0] = feedname
         """
-        feedname = args[0]
+        feedname = args[0]  
         mqtt_feedname = bytes('{:s}/feeds/{:s}'.format(self.ADAFRUIT_IO_USERNAME, feedname), 'utf-8')
         self.mqtt_client.set_callback(Server.cb)
         self.mqtt_client.subscribe(mqtt_feedname)
+
+    def kill_button(self):
+        return

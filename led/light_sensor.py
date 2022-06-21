@@ -13,16 +13,19 @@ class Light_Sensor:
         self.logger = logger
         self.LED = LED()
         self.LED.on()
+        self.adc.atten(machine.ADC.ATTN_11DB)
+        self.adc.width(machine.ADC.WIDTH_10BIT)  # was 10
+
 
         
 
 
     def read_value(self):
         """ Returns lightsensor reading"""
-    
+
         light_intensity = self.adc.read()
-        self.logger.log("Light intensity: %f" % light_intensity, self.feedname)
-        print("\nLight intensity = %f\n\n" % light_intensity)
+        self.logger.log("Light intensity: %d" % light_intensity, self.feedname)
+        print("\nLight intensity = %d\n\n" % light_intensity)
         
         return light_intensity
 
