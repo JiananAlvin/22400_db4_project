@@ -12,8 +12,8 @@ import constant
 def main():
     logger = Logger()
     # server = Server("Redmip", "asd12345")
-    #server = Server("jxuiphone", "12345678")
-    server = Server("a1c3", "nmro9920")
+    server = Server("jxuiphone", "12345678")
+    # server = Server("a1c3", "nmro9920")
     server.create_MQTT_clientID()
     server.connect_MQTT()
 
@@ -36,6 +36,7 @@ def main():
         temperature = temperature_sensor.read_value()
         server.publish_feed(temperature_sensor)
 
+        pid.ki_enable(True)
         frequency = pid.update(temperature, constant.SET_POINT)
 
         # Set and publish frequency

@@ -30,6 +30,8 @@ class CoolingMotor:
         self.direction, self.freq = args[0], args[1]
         if self.freq < 1:
             self.freq = 1
+        if self.freq > 15000:
+            self.freq = 15000
         self.pin_dir(self.direction)
         self.pin_step.freq(
             self.freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed

@@ -13,7 +13,7 @@ DUTY_CYCLE = int(0.48 * 1023)
 TENP_SENS_ADC_PIN_NO = 32
 
 # the desired temperature
-SET_POINT = 20
+SET_POINT = 18
 
 # pins for the OLED screen
 OLED_SCL_NO = 22

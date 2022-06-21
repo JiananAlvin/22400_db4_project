@@ -23,7 +23,7 @@ class PID:
 
         P_value = self.k_p * error
         # D_value = -(self.k_d * (error - self.last_error))
-        D_value = self.k_d * (self.last_error - error)
+        D_value = self.k_d * (error - self.last_error)
         self.last_error = error
         # if -10 < self.last_output < 10:
         if self.ki_is_enabled:
