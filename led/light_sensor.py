@@ -17,13 +17,19 @@ class Light_Sensor:
         self.adc.width(machine.ADC.WIDTH_10BIT)  # was 10
 
 
+
         
 
 
     def read_value(self):
         """ Returns lightsensor reading"""
-
-        light_intensity = self.adc.read()
+        readings = 0
+        for _ in range(30):
+            read = self.adc.read()
+            readings += read
+            #print(read)
+        
+        light_intensity = int(readings/30)
         self.logger.log("Light intensity: %d" % light_intensity, self.feedname)
         print("\nLight intensity = %d\n\n" % light_intensity)
         

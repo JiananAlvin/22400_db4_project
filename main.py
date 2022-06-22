@@ -156,10 +156,19 @@ def main():
     sensor_list = init_sensors(logger, thread_manager)
     publish_manager(sensor_list[:-2], thread_manager) # no need to publish feeding and cooling motor for now
     #thread_manager.manage_threads()
-    PID_experiment(logger, sensor_dict[constant.FEEDNAME_COOL_MOTOR])
+    
+    #PID_experiment(logger, sensor_dict[constant.FEEDNAME_COOL_MOTOR])
+    val = 0
+    i = 0
     while True:
+        # i+=1
         # time.sleep(2)
-        # sensor_dict[constant.FEEDNAME_LIGHTSENSOR].read_value()
+        # val += sensor_dict[constant.FEEDNAME_LIGHTSENSOR].read_value()
+        # if i == 10:
+        #     avg = val/10
+        #     print("The AVERAGE is:::::::::::::::::::::::::::::::::::::::::::: %d" % avg)
+        #     val = 0
+        #     i = 0
         pass
 
     return 0

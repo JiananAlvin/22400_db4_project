@@ -39,7 +39,9 @@ class CoolingMotor:
         self.direction = 1
         self.pin_dir(self.direction)
         if self.freq < 1:
-            self.freq = 1   
+            self.freq = 1 
+        if self.freq > 15000:
+            self.freq  = 15000
         self.pin_step.freq(self.freq)  # Frequency is the number of times per second that we repeat the on and off cycle -> rotating speed
         self.pin_step.duty(constant.DUTY_CYCLE)  # Duty cycle refers the amount of time the pulse is ON -> voltage
         self.logger.log("Updated cooling <%d,%d>" % (self.direction, self.freq), self.feedname)
@@ -52,5 +54,5 @@ class CoolingMotor:
             time.sleep(period)
             self.freq = self.pid.update(temperature_sensor.read_value(log1=True), constant.SET_POINT)
             print("Updating freq on coooling motor: %f" % self.freq)
-
+            self.freq = 8000
             self.update_cooling()

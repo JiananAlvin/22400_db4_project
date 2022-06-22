@@ -144,7 +144,6 @@ class TemperatureSensor():
         #self.logger.log('V_measured = ' + str(self.adc_V_lookup[round(raw_average)]))
 
         # Convert to resistance
-        print("Raw average: %d" %  round(raw_average))
         raw_average = self.ADC_MAX * self.adc_V_lookup[round(raw_average)] / self.ADC_Vmax
         resistance = (self.SER_RES * raw_average) / (self.ADC_MAX - raw_average)
         #self.logger.log('Thermistor resistance: {} ohms'.format(resistance))
